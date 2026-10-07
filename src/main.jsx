@@ -1,10 +1,15 @@
+// src/main.jsx - Version 2 - Added Router wrapper
+// Chain: BrowserRouter wraps whole App -> so any component can use Link, useNavigate
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
 )

@@ -1,8 +1,6 @@
-// src/components/Navbar.jsx
-// Version 1 - Basic - No Redux yet
-// Chain Future: This Navbar will later get cart count from cartSlice -> Navbar
-// Chain Future: This Navbar will later get user from authSlice -> to show Login vs User menu
+
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -16,11 +14,11 @@ const Navbar = () => {
 
           {/* Desktop Links - Wonderful hover effect */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition">Home</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition">Products</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition">Cart (0)</a>
-            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition">Login</a>
-            <a href="#" className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow">Sign Up</a>
+            <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition">Home</Link>
+            <Link to="/products" className="text-gray-700 hover:text-blue-600 font-medium transition">Products</Link>
+            <Link to="/cart" className="text-gray-700 hover:text-blue-600 font-medium transition">Cart (0)</Link>
+            <Link to="/login" className="text-gray-700 hover:text-blue-600 font-medium transition">Login</Link>
+            <Link to="/signup" className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition font-medium shadow">Sign Up</Link>
           </div>
 
           {/* Mobile Menu Button - simple for now */}
