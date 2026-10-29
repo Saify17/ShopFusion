@@ -12,10 +12,15 @@ import Footer from "./components/Footer";
 import ShippingPolicy from "./components/ShippingPolicy";
 import ContactHelp from "./components/ContactHelp";
 import AdminProducts from "./pages/AdminProducts";
+import Favorites from "./pages/Favorites";
+import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
+      <ScrollToTop />
       <Navbar />
     <Routes>
       <Route path="/signup" element={<Signup/>}/>
@@ -27,6 +32,9 @@ function App() {
       <Route path="/shippingPolicy" element = {<ShippingPolicy/>}/>
       <Route path="/contactHelp" element={<ContactHelp/> }/>
       <Route path="/AdminPanel" element={<AdminProducts/>}/>
+      <Route path="/favorites" element={<Favorites/> } />
+      <Route path="/orders" element={<Orders/>}/>
+      <Route path="/profile" element={<Profile/>}/>
       
       
     </Routes>

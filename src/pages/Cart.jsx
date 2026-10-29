@@ -2,8 +2,9 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchCartByUser, removeFromCart, updateQuantity, clearCartLocal } from "../redux/slices/cartSlice";
 import { Link } from "react-router-dom";
-import { Lock, ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Tag, Star, HandleBottomRight } from 'lucide-react';
+import { Lock, ShoppingCart, Trash2, Plus, Minus, ArrowRight, ShieldCheck, Tag, Star } from 'lucide-react';
 import Swal from "sweetalert2";
+import { addOrder } from "../redux/slices/ordersSlice";
 
 
 const Cart = () => {
@@ -12,11 +13,6 @@ const Cart = () => {
   const dispatch = useDispatch();
   const currentUserId = authStore.user?.id;
 
-  useEffect(() => {
-    if (currentUserId) {
-      dispatch(fetchCartByUser(currentUserId));
-    }
-  }, [currentUserId, dispatch]);
 
   // If not logged in → show message
   if (!authStore.user) {
@@ -262,6 +258,18 @@ const Cart = () => {
               confirmButtonText: "Yes, Place it!"
             }).then((result) => {
               if (result.isConfirmed){
+
+                const newOrder = {
+                  id: Date.now(), 
+                  date: new Date().toISOString(), 
+                  items: cartStore.cart, 
+                  subtotal,
+                  shipping,
+                  platformFee,
+                  tax,
+                  total,
+                };
+                dispatch(addOrder(newOrder));
                 dispatch(clearCartLocal())
                 Swal.fire({
                 title: "Order Placed!",

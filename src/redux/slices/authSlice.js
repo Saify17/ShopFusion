@@ -36,6 +36,23 @@ export const login = createAsyncThunk("auth/login",
     }
 );
 
+export const updateProfile = createAsyncThunk("auth/updateProfile",
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      if (id > 208) {                      
+        const users = JSON.parse(localStorage.getItem("localUsers") || "[]");
+        localStorage.setItem("localUsers",
+          JSON.stringify(users.map(u => u.id === id ? { ...u, ...data } : u)));
+      } else {
+        await api.put(`/users/${id}`, data);   
+      }
+      return { ...data, id };
+    } catch (error) { return rejectWithValue(error.message); }
+  });
+
+
+
+
 const initialState = {
     user: JSON.parse(localStorage.getItem("user")) || null, 
     token: localStorage.getItem("token") || null, 
@@ -92,6 +109,13 @@ const authSlice = createSlice({
             state.loading=false;
             state.error = action.payload;
         });
+
+        builder.addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload }; // merge the edited fields onto the existing user object
+        localStorage.setItem("user", JSON.stringify(state.user)); // same "user" key your login already uses — so a refresh keeps the edit
+        });
+
+
     }
 })
 

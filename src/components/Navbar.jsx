@@ -1,8 +1,13 @@
-
 import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react"; // NEW
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../redux/slices/authSlice";
+import { loadUserCart, resetCartState, fetchCartByUser } from "../redux/slices/cartSlice";
 import { CircleUser } from 'lucide-react';
+import { loadUserFav, resetFavState } from "../redux/slices/favSlice"; 
+import { ChevronDown, User, Package, LogOut } from "lucide-react";
+import { loadUserOrders, resetOrdersState } from "../redux/slices/ordersSlice";
+
 
 const Navbar = () => {
 
@@ -12,8 +17,27 @@ const Navbar = () => {
   const cartStore = useSelector((state) => state.cartStore);
   console.log("cartstore value is ", cartStore.totalItems);
 
+  const favStore = useSelector(s => s.favStore); 
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (authStore.user?.id) {
+      dispatch(loadUserCart(authStore.user.id)); 
+       dispatch(loadUserFav(authStore.user.id));
+      dispatch(loadUserOrders(authStore.user.id));
+      dispatch(fetchCartByUser(authStore.user.id));
+    } else {
+      dispatch(resetCartState()); 
+       dispatch(resetFavState());
+       dispatch(resetOrdersState()); 
+    }
+  }, [authStore.user?.id, dispatch]);
+
+
 
   const handleLogout = () => {
     dispatch(logout());
@@ -44,23 +68,51 @@ const Navbar = () => {
             <NavLink to="/" className={navLinkClass}>Home</NavLink>
             <NavLink to="/products" className={navLinkClass}>Products</NavLink>
             <NavLink to="/cart" className={navLinkClass}>Cart ({cartStore.totalItems})</NavLink>
+            <NavLink to="/favorites" className={navLinkClass}>Favorites ({favStore.fav.length})</NavLink>
+            
             {authStore.user && (authStore.user.role === "admin" ) && (
               <NavLink to="/adminPanel" className={navLinkClass}>Admin</NavLink>
 )}
  
-            {authStore.user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-gray-700 font-medium flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-2xl border border-gray-100">
-                  <CircleUser className='text-blue-700 w-5 h-5' /> Hi {authStore.user.username}
-                </span>
-                <button 
-                  onClick={handleLogout} 
-                  className="cursor-pointer bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-700 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition shadow-sm"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
+                {authStore.user ? (
+                 
+                  <div className="relative">
+                    {menuOpen && <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />}
+                    <button
+                      onClick={() => setMenuOpen((prev) => !prev)} 
+                      className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-2xl border border-gray-100 text-gray-700 font-medium"
+                    >
+                      <CircleUser className="text-blue-700 w-5 h-5" /> Hi {authStore.user.username}
+                      <ChevronDown size={16} className={`transition-transform ${menuOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {menuOpen && (
+                      
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50">
+                        <Link
+                          to="/profile"
+                          onClick={() => setMenuOpen(false)} // close the menu once you pick something
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <User size={16} /> Profile
+                        </Link>
+                        <Link
+                          to="/orders"
+                          onClick={() => setMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                        >
+                          <Package size={16} /> My Orders
+                        </Link>
+                        <button
+                          onClick={() => { setMenuOpen(false); handleLogout(); }}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 border-t border-gray-100"
+                        >
+                          <LogOut size={16} /> Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
               <div className="flex items-center gap-4">
                 <NavLink to="/signup" className={navLinkClass}>Sign Up</NavLink>
                 <NavLink 
